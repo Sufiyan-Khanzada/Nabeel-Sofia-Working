@@ -30,4 +30,18 @@ class Products extends Model
         'purchaseproof' ,
         'rental_price_oneday'
      ];
+
+     public function searchProduct($query, $id)
+     {
+       $data = $this::where('Item_name', 'LIKE', "%$query%")->get();
+       if(!empty($data)){
+        $recommended = new RecommendedProduct();
+        $recommended->setRecommended($query, $id);
+         if(count($data) > 8)
+         {
+          return $data->paginate(8);
+         }
+         return $data;
+       }
+     }
 }

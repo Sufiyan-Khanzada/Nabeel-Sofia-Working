@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PassportController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\RecommendedProductController;
+use App\Http\Controllers\FilterController;
 
 
 
@@ -53,7 +55,16 @@ Route::post('delete-cat/{id}', [CategoryController::class, 'destroy_cat']);
 Route::post('{id}/update-cat',[CategoryController::class,'update_cat']);
 
 
-
+Route::middleware('auth:api')->group(function (){
+    Route::controller(RecommendedProductController::class)->group(function(){
+        Route::get('recommeded-products', 'getRecommendedProducts');
+        Route::post('add-recommended-products', 'setRecommendedProducts');
+        Route::post('search-product', 'searchProduct');
+    });
+});
+Route::middleware('auth:api')->group(function(){
+    Route::get('filter-product', FilterController::class);
+});
 
 
 
