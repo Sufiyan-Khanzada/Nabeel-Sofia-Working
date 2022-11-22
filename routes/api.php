@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PassportController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RecommendedProductController;
 use App\Http\Controllers\FilterController;
 
@@ -66,7 +67,14 @@ Route::middleware('auth:api')->group(function(){
     Route::get('filter-product', FilterController::class);
 });
 
-
+Route::middleware('auth:api')->group(function (){
+    Route::controller(ChatController::class)->group(function(){
+        Route::get('chat/users', 'dashboard');
+        Route::post('chat/send', 'sendmessage');
+        Route::get('chat/message/{id}', 'getMessage');
+        Route::post('chat/refresh', 'getRefreshMessage');
+    });
+});
 
 
 
