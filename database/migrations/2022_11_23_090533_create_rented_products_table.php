@@ -20,8 +20,8 @@ return new class extends Migration
             $table->tinyInteger('product_id');
             $table->string('price');
             $table->string('status');
-            $table->dateTime('from');
-            $table->dateTime('to');
+            $table->date('from');
+            $table->date('to');
             $table->timestamps();
         });
     }

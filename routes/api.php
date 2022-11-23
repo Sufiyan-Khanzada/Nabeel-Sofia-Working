@@ -8,8 +8,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RecommendedProductController;
 use App\Http\Controllers\FilterController;
-
-
+use App\Http\Controllers\RentedProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +74,18 @@ Route::middleware('auth:api')->group(function (){
         Route::post('chat/refresh', 'getRefreshMessage');
     });
 });
+
+Route::middleware('auth:api')->group(function (){
+    Route::controller(RentedProductController::class)->group(function(){
+        Route::get('available-product/{id}', 'checkAvailability');
+        Route::post('request-rental', 'requestRental');
+        Route::post('approve-rental/{id}', 'approveRental');
+        Route::post('reject-rental/{id}', 'rejectRental');
+    });
+});
+
+Route::post('product-trending/{id}', [ProductController::class, 'productCount']);
+Route::get('trending-product', [ProductController::class, 'trendingProduct']);
 
 
 
