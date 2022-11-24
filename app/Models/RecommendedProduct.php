@@ -28,7 +28,14 @@ class RecommendedProduct extends Model
             }
             return $products;
         }
-        return null;
+        else{
+            $products = Products::get();
+            if(count($products) > 5)
+            {
+                return $products->paginate(5);
+            }
+            return $products;
+        }
     }
     public function setRecommended($query, $id)
     {
