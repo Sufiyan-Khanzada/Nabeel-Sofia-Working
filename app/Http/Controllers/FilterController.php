@@ -31,9 +31,6 @@ class FilterController extends Controller
             if($request->has('tags')){
                 $query->where('tags','LIKE', "%$request->tags%");
             }
-            if($request->has('color')){
-                $query->where('color','LIKE', "%$request->color%");
-            }
             if(count($query->get()) > 8)
             {
                 return $query->paginate(8);

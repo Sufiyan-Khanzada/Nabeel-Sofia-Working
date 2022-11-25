@@ -13,7 +13,7 @@ class Products extends Model
         'Item_price',
         'Item_brand',
         'Item_rating',
-        'username',        
+        'username',
         'Item_mode',
         'Item_image',
         'rental_price_week' ,
@@ -30,6 +30,11 @@ class Products extends Model
         'purchaseproof' ,
         'rental_price_oneday'
      ];
+
+    public function reviews()
+    {
+        return $this->belongsTo(Review::class, 'id', 'product_id');
+    }
 
      public function searchProduct($query, $id)
      {

@@ -35,8 +35,8 @@ class User extends Authenticatable
         'payement',
         'privacypolicy',
         'termscondition',
-];
-     /**
+    ];
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -55,27 +55,31 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function reviews()
+    {
+        return $this->belongsTo(Review::class, 'id', 'user_id');
+    }
+
     public function user_messages()
     {
-        return $this->belongsTo(UserMessage::class, 'id','sender_id');
+        return $this->belongsTo(UserMessage::class, 'id', 'sender_id');
     }
     public function getMessages($id)
     {
         $user = User::where('id', auth()->user()->id)->first();
         $userchat = $user->user_messages::with('messages')
-        ->where(['sender_id' => $user->id, 'receiver_id' => $id])
-        ->orWhere(['receiver_id' => $user->id, 'sender_id' => $id])
-        ->get()->pluck('id');
+            ->where(['sender_id' => $user->id, 'receiver_id' => $id])
+            ->orWhere(['receiver_id' => $user->id, 'sender_id' => $id])
+            ->get()->pluck('id');
         $chat = Message::with('user_messages')->whereIn('user_messages_id', $userchat)
-        ->orderBy('created_at', 'ASC')
-        ->get();
+            ->orderBy('created_at', 'ASC')
+            ->get();
         return $chat;
     }
     public function sendMessages($sender, $receiver, $message)
     {
         $usermessage = UserMessage::where(['sender_id' => $sender, 'receiver_id' => $receiver])->first();
-        if(!$usermessage)
-        {
+        if (!$usermessage) {
             $usermessage = UserMessage::create([
                 'sender_id' => $sender,
                 'receiver_id' => $receiver
@@ -97,34 +101,33 @@ class User extends Authenticatable
     }
     public function getChatUsers()
     {
-        $chatusers = $this->whereNot('id' , auth()->user()->id)->get();
+        $chatusers = $this->whereNot('id', auth()->user()->id)->get();
         return $chatusers;
     }
 
     public function getRefreshMessage($request)
     {
-        if($request->has('message_id') && !empty($request->has('message_id'))){
+        if ($request->has('message_id') && !empty($request->has('message_id'))) {
             $ids = [];
-            foreach($request->message_id as $key => $value)
-            {
-                    foreach($value as $k => $v)
-                    {
-                        array_push($ids, $v);
-                    }
+            foreach ($request->message_id as $key => $value) {
+                foreach ($value as $k => $v) {
+                    array_push($ids, $v);
+                }
             }
-                $usermessage = UserMessage::where([
-                    'sender_id' => $request->receiver_id,
-                    'receiver_id' => $request->sender_id])
+            $usermessage = UserMessage::where([
+                'sender_id' => $request->receiver_id,
+                'receiver_id' => $request->sender_id
+            ])
                 ->orWhere([
                     'sender_id' => $request->receiver_id,
-                    'receiver_id' => $request->sender_id])
+                    'receiver_id' => $request->sender_id
+                ])
                 ->first();
-                $newmessage = Message::where('user_messages_id', $usermessage->id)
+            $newmessage = Message::where('user_messages_id', $usermessage->id)
                 ->with('user_messages')->whereNotIn('id', $ids)
                 ->get();
-                return $newmessage;
-        }
-        else{
+            return $newmessage;
+        } else {
             return null;
         }
     }

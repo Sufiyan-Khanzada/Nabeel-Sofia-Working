@@ -9,6 +9,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\RecommendedProductController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\RentedProductController;
+use App\Http\Controllers\ReviewsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +82,16 @@ Route::middleware('auth:api')->group(function (){
         Route::post('request-rental', 'requestRental');
         Route::post('approve-rental/{id}', 'approveRental');
         Route::post('reject-rental/{id}', 'rejectRental');
+    });
+});
+
+Route::middleware('auth:api')->group(function (){
+    Route::controller(ReviewsController::class)->group(function(){
+        Route::post('add-reviews', 'addReview');
+        Route::post('update-reviews/{id}', 'updateReview');
+        Route::get('reviews-by-user/{id}', 'allByUsers');
+        Route::get('reviews-by-product/{id}', 'allByProduct');
+        Route::get('single-review/{id}', 'singleReview');
     });
 });
 
