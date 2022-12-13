@@ -12,27 +12,54 @@ use Validator;
 class CategoryController extends Controller
 {
     //
-     public function allcat()
+     public function allChildCat()
     {
-        $cat = Category::all();
-        if($cat==""){
+        $cat = Category::where('is_child', 1);
+        if($cat == null){
         return response()->json([
             'success' => true,
-            'message' => 'Category Not Found Done.',
-            // 'data' => $Items
-
+            'message' => 'Category Not Found Done.'
         ], 404);
-        
-
         }else{
         return response()->json([
             'success' => true,
             'message' => 'Category Fetch Successfully Done.',
-            'data' => $cat
+            'data' => $cat->get()
 
         ], 200);
-        
     }
+}
+
+public function relationCategory($id)
+    {
+        try {
+            $parent = Category::where('id', $id)->where('is_child', 0)->get();
+            if($parent){
+                $child = Category::where('child_of', $id)->get();
+                $result = $parent->merge($child);
+            }
+            return response()->json(['success' => true, 'data' => $result], 200);
+        } catch (\Exception $th) {
+            return response()->json(['error' => true, 'message' => $th], 402);
+        }
+    }
+
+public function allParentCat()
+{
+    $cat = Category::where('is_child', 0);
+    if($cat == null){
+    return response()->json([
+        'success' => true,
+        'message' => 'Category Not Found Done.'
+    ], 404);
+    }else{
+    return response()->json([
+        'success' => true,
+        'message' => 'Category Fetch Successfully Done.',
+        'data' => $cat->get()
+
+    ], 200);
+}
 }
 
 
@@ -40,38 +67,27 @@ public function store(Request $request)
     {
         
         $input = $request->all();
-   
         $validator = Validator::make($input, [
-          
-            'main_category'=>'required|string',
-            'sub_category' => 'required|string',
-            'sub_category1' => 'required|string',
+            'name'=>'required|string',
+            'is_child' => 'required|integer',
+            'child_of' => 'nullable|integer',
             ]);
-   
-        
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Please see errors parameter for all errors.',
                 'errors' => $validator->errors()
             ]);
-        }  
-     
-     
-        
-
+        }
             $cat = new Category();
-            $cat->main_category=$request->main_category;
-            $cat->sub_category=$request->sub_category;
-            $cat->sub_category1=$request->sub_category1;
+            $cat->name=$request->name;
+            $cat->is_child=$request->is_child;
+            $cat->child_of=$request->child_of;
             $cat->save();
-
         return response()->json([
             'success' => true,
             'message' => 'Category Details Added Successfully.',
-            'Images'=> 'Image Not Added',
-            
-            
+            'data'=> $cat,
         ], 200);
 
          }
@@ -79,9 +95,6 @@ public function store(Request $request)
 public function show_single_category(Request $request , $id)
     {
          $cat = Category::find($id);
-        // $ids = $request->input('ids', []); // via injected instance of Request
-      // $items1 = items::whereIn('id', explode(',', $id))->get();
-       // $items1 = items::whereIn('id', explode(',', $id->$request->get()));
         if (is_null($cat)) {
             return response()->json([
                 'success' => false,
@@ -93,33 +106,27 @@ public function show_single_category(Request $request , $id)
                 'message' => 'Items Details Found',
                 'data' => $cat
             ], 404);
-
-       // return $items;
     }
 
 
 public function update_cat(Request $request , $id)
     {
-
          $input = $request->all();
-        
             $cat = new Category();
             $cat = Category::find($id);
             
            
          if($cat){
            
-            $cat->main_category=$request->main_category;
-            $cat->sub_category=$request->sub_category;
-            $cat->sub_category1=$request->sub_category1;
-            
-            
-           
+            $cat->name=$request->name;
+            $cat->is_child=$request->is_child;
+            $cat->child_of=$request->child_of;
             $cat->save();
             
              return response()->json([
             'success' => true,
-            'message' => 'Category Details Updated Successfully.'
+            'message' => 'Category Details Updated Successfully.',
+            'data' => $cat
         ], 200);
 
             
@@ -141,12 +148,20 @@ public function update_cat(Request $request , $id)
  public function destroy_cat($id)
     {
         $delete_cat = Category::find($id);
-        $delete_cat->delete();
+        if($delete_cat){
+            $delete_cat->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Category Remove Successfully Done.'
+            ], 200);
+        }
+        else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Category Not Found.'
+            ], 404);
+        }
    
-        return response()->json([
-            'success' => true,
-            'message' => 'Category Remove Successfully Done.'
-        ], 200);
     }
 
 

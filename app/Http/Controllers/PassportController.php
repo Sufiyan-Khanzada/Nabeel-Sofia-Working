@@ -45,7 +45,7 @@ public function all_branded()
         $validate_data = [
             'name' => 'required|string|min:4',
             'email' => 'unique:users|required|email',
-            'password' => 'required|regex:A-Za-z0-9\!-_',
+            'password' => 'required',
             'confirm_password' => 'same:password|required',
             'lastname' => 'required|string',
             'postalcode' => 'nullable|string', 
@@ -55,7 +55,7 @@ public function all_branded()
             'insuretype' => 'nullable|string',
             'cnic_back' => 'nullable',
             'cnic_front' => 'nullable',
-            'payement' => 'nullable',
+            'payment' => 'nullable',
             'privacypolicy' => 'nullable|string', 
             'termscondition' => 'nullable|string',
             'profile' => 'nullable',
@@ -127,13 +127,13 @@ public function all_branded()
             $user->insuretype=$request->insuretype;
             // $user->cnic_back=$full_image1;
             // $user->cnic_front=$full_image2;
-            $user->payement=$request->payement;
+            $user->payment=$request->payement;
             $user->privacypolicy=$request->privacypolicy;
             $user->termscondition=$request->termscondition;
              $user->featured=$request->featured;
              $user->country=$request->country;
             $user->state=$request->state;
-            $user->profile->$request->profile;
+            $user->profile=$request->profile;
             $user->save();
 
          
@@ -216,7 +216,7 @@ public function all_branded()
         // $refreshTokenRepository->revokeRefreshTokensByAccessTokenId($$access_token->id);
 
         return response()->json([
-            'success' => true,
+            'status' => true,
             'message' => 'User logout successfully.'
         ], 200);
     }
@@ -311,7 +311,7 @@ public function all_branded()
          if($user){
            
             $user->name=$request->name;
-            $user->email=$request->email;
+           // $user->email=$request->email;
             // $user->password=Hash::make($input['password']);
             $user->lastname=$request->lastname;
             // $user->username=$request->username;
@@ -323,10 +323,10 @@ public function all_branded()
             // $user->cnic_back=$input['cnic_back']=$full_image1;
             // $user->cnic_front=$input['cnic_front']=$full_image2;
             // $user->cnic_front=$full_image2;
-            $user->payement=$request->payement;
+            $user->payment=$request->payement;
             $user->privacypolicy=$request->privacypolicy;
             $user->termscondition=$request->termscondition;
-              $user->county=$request->county;
+              $user->country=$request->country;
             $user->state=$request->state;
              $user->featured=$request->featured;
                $user->profile=$request->profile;
@@ -377,6 +377,15 @@ public function all_branded()
        // return $items;
     }
 
-
+    public function statsUser($id)
+    {
+        try {
+            $user = new User();
+            $result = $user->statsUser($id);
+            return $result;
+        } catch (\Exception $e) {
+            return response()->json(['error' => true, 'message' => $e], 400);
+        }
+    }
 
 }

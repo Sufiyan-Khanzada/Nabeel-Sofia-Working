@@ -10,6 +10,8 @@ use App\Http\Controllers\RecommendedProductController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\RentedProductController;
 use App\Http\Controllers\ReviewsController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\FavouriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,21 +43,28 @@ Route::get('single_user/{id}', [PassportController::class, 'show_single_user']);
 
 ///Products API's /////////
 Route::post('insert-product', [ProductController::class, 'create_product']);
+Route::post('update_product/{id}',[ProductController::class,'update_product']);
+Route::delete('delete-product/{id}',[ProductController::class,'destroy_product']);
 Route::get('get-products', [ProductController::class, 'allproducts']);
 Route::get('single-product/{id}',[ProductController::class,'show_product']);
-Route::post('delete-product/{id}',[ProductController::class,'destroy_product']);
-Route::post('update_product/{id}',[ProductController::class,'update_product']);
-Route::get('showtrendingproducts', [ProductController::class, 'all_trending']);
-Route::get('single-product_cat/{cat}',[ProductController::class,'show_product_cat']);
+Route::get('trending-product', [ProductController::class, 'trendingProduct']);
+Route::get('product-by-user/{id}', [ProductController::class, 'UserProducts']);
+Route::post('product-trending/{id}', [ProductController::class, 'productCount']);
 
 //Category API's////
-Route::post('catadd', [CategoryController::class, 'store']);
-Route::get('showall-cat', [CategoryController::class, 'allcat']);
-Route::post('show-single_cat/{id}',[CategoryController::class, 'show_single_category']);
-Route::post('delete-cat/{id}', [CategoryController::class, 'destroy_cat']);
-Route::post('{id}/update-cat',[CategoryController::class,'update_cat']);
+Route::post('add-category', [CategoryController::class, 'store']);
+Route::get('all-child-category', [CategoryController::class, 'allChildCat']);
+Route::get('all-parents-category',[CategoryController::class, 'allParentCat']);
+Route::get('single-category/{id}',[CategoryController::class, 'show_single_category']);
+Route::get('relation-category/{id}',[CategoryController::class, 'relationCategory']);
+Route::delete('delete-category/{id}', [CategoryController::class, 'destroy_cat']);
+Route::post('edit-category/{id}',[CategoryController::class,'update_cat']);
 
 
+Route::controller(RecommendedProductController::class)->group(function(){
+    Route::get('recommeded-products', 'getRecommendedProducts');
+    Route::post('search-product', 'searchProduct');
+});
 Route::middleware('auth:api')->group(function (){
     Route::controller(RecommendedProductController::class)->group(function(){
         Route::get('recommeded-products', 'getRecommendedProducts');
@@ -63,9 +72,27 @@ Route::middleware('auth:api')->group(function (){
         Route::post('search-product', 'searchProduct');
     });
 });
-Route::middleware('auth:api')->group(function(){
-    Route::get('filter-product', FilterController::class);
+
+Route::middleware('auth:api')->group(function (){
+    Route::controller(FavouriteController::class)->group(function(){
+        Route::post('add-favourite', 'store');
+        Route::delete('delete-favourite/{id}', 'delete');
+        Route::get('get-favourite', 'index');
+    });
 });
+Route::controller(BrandController::class)->group(function(){
+    Route::get('single-brand/{id}', 'view');
+    Route::get('all-brands', 'index');
+});
+Route::middleware('auth:api')->group(function (){
+    Route::controller(BrandController::class)->group(function(){
+        Route::post('add-brand', 'store');
+        Route::post('edit-brand/{id}', 'update');
+        Route::delete('delete-brand/{id}', 'destroy');
+    });
+});
+// Filter product API
+    Route::post('filter-product', FilterController::class);
 
 Route::middleware('auth:api')->group(function (){
     Route::controller(ChatController::class)->group(function(){
@@ -78,10 +105,14 @@ Route::middleware('auth:api')->group(function (){
 
 Route::middleware('auth:api')->group(function (){
     Route::controller(RentedProductController::class)->group(function(){
-        Route::get('available-product/{id}', 'checkAvailability');
+        Route::post('available-product/{id}', 'checkAvailability');
         Route::post('request-rental', 'requestRental');
         Route::post('approve-rental/{id}', 'approveRental');
         Route::post('reject-rental/{id}', 'rejectRental');
+        Route::post('return-product/{id}', 'returnProduct');
+        Route::post('owner-usage', 'personalUse');
+        Route::get('rented-product-by-seller/{id}', 'getSellingUser');
+        Route::get('rented-product-by-buyer/{id}', 'getBuyingUser');
     });
 });
 
@@ -92,11 +123,11 @@ Route::middleware('auth:api')->group(function (){
         Route::get('reviews-by-user/{id}', 'allByUsers');
         Route::get('reviews-by-product/{id}', 'allByProduct');
         Route::get('single-review/{id}', 'singleReview');
+        Route::get('reviews-for-user/{id}', 'allReviewsForUser');
     });
 });
 
 Route::post('product-trending/{id}', [ProductController::class, 'productCount']);
-Route::get('trending-product', [ProductController::class, 'trendingProduct']);
 
 
 
@@ -104,6 +135,7 @@ Route::get('trending-product', [ProductController::class, 'trendingProduct']);
 
 // put all api protected routes here
 Route::middleware('auth:api')->group(function () {
+    Route::get('user-stats/{id}', [PassportController::class, 'statsUser']);
     Route::post('user-detail', [PassportController::class, 'userDetail']);
     Route::post('logout', [PassportController::class, 'logout']);
 });

@@ -21,7 +21,7 @@ class RecommendedProduct extends Model
         $recommend = $this::with('users')->where('user_id', $id)->first();
         if($recommend)
         {
-            $products = Products::where('Item_name', 'LIKE', "%$recommend->search_query%")->get();
+            $products = Category::with('products')->where('name','LIKE', "$recommend->search_query")->get();
             if(count($products) > 5)
             {
                 return $products->paginate(5);

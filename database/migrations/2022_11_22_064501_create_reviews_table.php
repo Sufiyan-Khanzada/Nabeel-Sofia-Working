@@ -19,6 +19,7 @@ return new class extends Migration
             $table->tinyInteger('product_id');
             $table->tinyInteger('rating');
             $table->text('reviews');
+            $table->string('review_image')->nullable();
             $table->timestamps();
         });
     }

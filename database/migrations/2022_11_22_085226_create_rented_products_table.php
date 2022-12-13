@@ -18,10 +18,12 @@ return new class extends Migration
             $table->tinyInteger('buyer_id');
             $table->tinyInteger('seller_id');
             $table->tinyInteger('product_id');
-            $table->string('price');
-            $table->string('status');
+            $table->string('price')->nullable();
+            $table->string('shipment_address')->nullable();
+            $table->string('request_status')->nullable();
             $table->dateTime('from');
             $table->dateTime('to');
+            $table->string('product_status')->nullable();
             $table->timestamps();
         });
     }

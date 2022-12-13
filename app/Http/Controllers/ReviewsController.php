@@ -20,7 +20,8 @@ class ReviewsController extends Controller
             'user_id' => 'required',
             'product_id' => 'required',
             'rating' => 'required',
-            'reviews' => 'required'
+            'reviews' => 'required',
+            'review_image' => 'nullable'
         ]);
         if($validate->fails())
         {
@@ -39,7 +40,8 @@ class ReviewsController extends Controller
             'user_id' => 'required',
             'product_id' => 'required',
             'rating' => 'required',
-            'reviews' => 'required'
+            'reviews' => 'required',
+            'review_image' => 'nullable'
         ]);
         if($validate->fails())
         {
@@ -73,6 +75,15 @@ class ReviewsController extends Controller
     {
         try {
             return $this->model->singleReview($id);
+        } catch (\Exception $e) {
+            return response()->json(['error' => true, 'message' => $e], 406);
+        }
+    }
+
+    public function allReviewsForUser($id)
+    {
+        try {
+            return $this->model->allReviewsForUser($id);
         } catch (\Exception $e) {
             return response()->json(['error' => true, 'message' => $e], 406);
         }

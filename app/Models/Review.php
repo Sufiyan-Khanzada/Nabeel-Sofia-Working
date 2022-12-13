@@ -20,9 +20,20 @@ class Review extends Model
     }
 
     protected $fillable = [
-        'user_id', 'product_id', 'rating', 'reviews'
+        'user_id', 'product_id', 'rating', 'reviews', 'review_image'
     ];
-
+    public function reviewImage($review)
+    {
+        if(!empty($review)){
+            $image = time().'.'.$review->extension();
+            $review->move(public_path('reviews'), $image);
+            $review = $image;
+            return $review;
+        }
+        else{
+            return null;
+        }
+    }
     public function addReviews($request)
     {
         $owner = Products::where('user_id',auth()->id())
@@ -34,7 +45,7 @@ class Review extends Model
         }
         $rent = RentedProduct::where('buyer_id', auth()->id())
         ->where('product_id', $request->product_id)
-        ->where('status', 'approved')
+        ->where('request_status', 'approved')
         ->exists();
         $checking = $this->where('user_id', auth()->id())
         ->where('product_id', $request->product_id)
@@ -47,7 +58,7 @@ class Review extends Model
         {
             $check = RentedProduct::where('buyer_id', auth()->id())
             ->where('product_id', $request->product_id)
-            ->where('status', 'approved')
+            ->where('request_status', 'approved')
             ->first();
             if($check->from >= now()->toDateString())
             {
@@ -58,7 +69,8 @@ class Review extends Model
                     'user_id' => auth()->id(),
                     'product_id' => $request->product_id,
                     'rating' => $request->rating,
-                    'reviews' => $request->reviews
+                    'reviews' => $request->reviews,
+                    'review_image' => $this->reviewImage($request->review_image)
                 ]);
                 return response()->json(['success' => true, 'data' => $final], 200);
             } catch (\Exception $th) {
@@ -74,10 +86,13 @@ class Review extends Model
         ->find($id);
         if($review->updated_at == $review->created_at)
         {
-            $review->update([
-                'rating' => $request->rating,
-                'reviews' => $request->reviews
-            ]);
+            if($request->has('review_image'))
+            {
+                $review->review_image = $this->reviewImage($request->review_image);
+            }
+            $review->rating = $request->rating;
+            $review->reviews = $request->reviews;
+            $review->save();
             return response()->json(['success' => true, 'message' => 'review updated successfully', 'data' => $review], 200);
         }
         else{
@@ -97,7 +112,7 @@ class Review extends Model
     {
         $result = $this::where('product_id', $id)->get();
         if($result->isNotEmpty()){
-            return response()->json(['success' => true, 'data' => $result], 200);
+            return response()->json(['success' => true, 'data' => $result, 'count' => $result->count()], 200);
         }
         return response()->json(['error' => true, 'message' => 'no reviews yet'], 404);
     }
@@ -109,5 +124,17 @@ class Review extends Model
             return response()->json(['success' => true, 'data' => $result], 200);
         }
         return response()->json(['error' => true, 'message' => 'not found'], 404);
+    }
+
+    public function allReviewsForUser($id)
+    {
+        $review = $this::whereHas('products', function($query) use($id){
+            $query->where('user_id', $id);
+        })->get();
+        if($review->isNotEmpty())
+        {
+            return response()->json(['success' => true, 'data' => $review], 200);
+        }
+        return response()->json(['error' => true, 'message' => 'no record found'], 404);
     }
 }

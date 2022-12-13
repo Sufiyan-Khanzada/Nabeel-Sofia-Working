@@ -1,0 +1,1 @@
+[10-Dec-2022 00:17:11 UTC] PHP Fatal error:  Can't use method return value in write context in /home/zainrajput/Sofiapi.code7labs.com/app/Http/Controllers/ProductController.php on line 140

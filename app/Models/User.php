@@ -6,6 +6,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 //use Laravel\Sanctum\HasApiTokens;
 use Laravel\Passport\HasApiTokens;
 
@@ -22,19 +24,25 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'firstname',
         'lastname',
         'username',
-        'city',
-        'postalcode',
-        'address',
-        'phone',
-        'insuretype',
-        'cnic_back',
-        'cnic_front',
-        'profile',
-        'payement',
-        'privacypolicy',
-        'termscondition',
+        'city', 
+            'postalcode', 
+            'country',
+            'address',
+            'state',
+            'phone',
+            'image',
+            'cnic_front',
+            'cnic_back',
+            'insuretype', 
+            'cpassword', 
+            'proofid',
+            'payment', 
+            'confrimpass', 
+            'privacypolicy',
+            'termscondition',
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -63,6 +71,11 @@ class User extends Authenticatable
     public function user_messages()
     {
         return $this->belongsTo(UserMessage::class, 'id', 'sender_id');
+    }
+
+    public function rented_products()
+    {
+        return $this->belongsTo(RentedProduct::class, 'id', 'seller_id');
     }
     public function getMessages($id)
     {
@@ -130,5 +143,53 @@ class User extends Authenticatable
         } else {
             return null;
         }
+    }
+
+    public function statsUser($id)
+    {
+$cards = RentedProduct::select([
+        \DB::raw("DATE_FORMAT(created_at, '%m') as month"),
+        \DB::raw('SUM(price) as amount')
+    ])
+    ->where('seller_id',$id)
+    ->where('request_status','approved')
+    ->groupBy('month')
+    ->get()->toArray();
+    $products = RentedProduct::with(['products'])->select([
+        'product_id',
+        \DB::raw('SUM(price) as amount')
+    ])
+    ->where('seller_id',$id)
+    ->where('request_status','approved')
+    ->groupBy('product_id')
+    ->get()->toArray();
+    $cat = [];
+    foreach($products as $key => $value){
+        foreach($value as $k => $v)
+        {
+            if(is_array($v)){
+                foreach($v as $i => $j){
+                    array_push($cat, $j['category_id']);
+                }
+            }
+        }
+    }
+    $products2 = RentedProduct::select([
+        'product_id',
+        \DB::raw('SUM(price) as amount')
+    ])
+    ->where('seller_id',$id)
+    ->where('request_status','approved')
+    ->groupBy('product_id')
+    ->get()->pluck('product_id')->toArray();
+    // dd($products2);
+    $ch = Products::query()->with(['categories' => function($q){
+        $q->select(['id','name']);
+    }])
+    ->with(['rented_products' => function($q){
+        $q->select('product_id', 'price');
+    }])
+    ->whereIn('id', $products2)->get(['id', 'Item_name', 'category_id'])->toArray();
+    return response()->json(['success' => true, 'amount' => $cards, 'products' => $products, 'brands' => $ch],200);
     }
 }

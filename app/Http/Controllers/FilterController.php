@@ -18,23 +18,27 @@ class FilterController extends Controller
         try {
             $min = $request->has('min_price') && !empty($request->min_price) ? $request->min_price : 0;
             $max = $request->has('max_price') && !empty($request->max_price) ? $request->max_price : 100000;
-            $query = $query->newQuery();
+            $query::with('categories');
             if($request->has('min_price') && $request->has('max_price')){
                 $query->whereBetween('Item_price', [$min, $max]);
             }
             if($request->has('category')){
-                $query->where('category', $request->category);
+                $query->categories->where('name','=',"$request->category")
+                    ->where('is_child', 0);
+                $id = $query->categories->where('name','=',"$request->category")
+                ->where('is_child', 0)->get('id');
             }
             if($request->has('sub_category')){
-                $query->where('subcategory', $request->sub_category);
+                $query->categories->where('name','=',"$request->category")
+                ->where('is_child', 1)->where('child_of', $id);
             }
             if($request->has('tags')){
                 $query->where('tags','LIKE', "%$request->tags%");
             }
-            if(count($query->get()) > 8)
-            {
-                return $query->paginate(8);
-            }
+            // if(count($query->get()) > 8)
+            // {
+            //     return $query->paginate(8);
+            // }
             return $query->get();
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'something went wrong', 'Exception' => $e], 403);

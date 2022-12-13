@@ -10,10 +10,15 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = [
-        'main_category',
-        'sub_category',
-        'sub_category1',
+        'name',
+        'is_child',
+        'child_of',
         
             
   ];
+
+  public function products()
+  {
+     return $this->belongsTo(Products::class, 'id', 'category_id');
+  }
 }
