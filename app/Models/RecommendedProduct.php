@@ -16,19 +16,20 @@ class RecommendedProduct extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getRecommended($id)
+    public function getRecommended()
     {
-        $recommend = $this::with('users')->where('user_id', $id)->first();
-        if($recommend)
+        if(!(auth()->user()))
         {
-            $products = Category::with('products')->where('name','LIKE', "$recommend->search_query")->get();
+            $products = Products::where('views', '!=', 0)->with(['categories', 'brands'])->orderBy('views', 'DESC')->get();
+            return $products;
+        }
+        $recommend = $this::with('users')->where('user_id', auth()->user()->id)->first();
+        $products = Category::with('products')->where('name','LIKE', "$recommend->search_query")->get();
             if(count($products) > 5)
             {
                 return $products->paginate(5);
             }
-            return $products;
-        }
-        return null;
+        return $products;
     }
     public function setRecommended($query, $id)
     {

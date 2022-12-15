@@ -131,9 +131,12 @@ class Review extends Model
         $review = $this::whereHas('products', function($query) use($id){
             $query->where('user_id', $id);
         })->get();
+        $avg = $this::whereHas('products', function($query) use($id){
+            $query->where('user_id', $id);
+        })->avg('rating');
         if($review->isNotEmpty())
         {
-            return response()->json(['success' => true, 'data' => $review], 200);
+            return response()->json(['success' => true, 'data' => $review, 'count' => count($review), 'average' => $avg], 200);
         }
         return response()->json(['error' => true, 'message' => 'no record found'], 404);
     }

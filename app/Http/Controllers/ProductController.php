@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Validator;
 use App\Models\Products;
 use App\Models\Favourite;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -21,7 +22,7 @@ class ProductController extends Controller
     }
     public function allproducts()
     {
-        $products = $this->model::with(['categories', 'brands'])->get();
+        $products = $this->model::with(['categories', 'brands'])->where('status', 'approved')->get();
         return response()->json([
             'success' => true,
             'message' => 'Items Fetched SuccessFully.',
@@ -44,7 +45,7 @@ class ProductController extends Controller
     public function trendingProduct()
     {
         try {
-            $product = $this->model::where('views', '!=', 0)->with(['categories', 'brands'])->get();
+            $product = $this->model::where('views', '!=', 0)->where('status', 'approved')->with(['categories', 'brands'])->orderBy('views', 'DESC')->get();
             // if(count($product) > 5)
             // {
             //     $product = $this->model::where('views', '>', 0)->orderBy('views', 'DESC')->paginate(5);
@@ -66,11 +67,13 @@ class ProductController extends Controller
         }),],
         'user_id' => 'required|exists:users,id',
         'Item_mode' => 'required',
-        // 'Item_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'Item_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'views' => 'nullable',
         'rental_price_week' => 'nullable',
         'rental_price_oneday' => 'nullable',
         'category_id' => 'required|exists:categories,id',
+        'min_rent_day' => 'required',
+        'max_rent_day' => 'required',
         'size' => 'nullable',
         'color' => 'nullable',
         'insuretype' => 'nullable',
@@ -81,7 +84,7 @@ class ProductController extends Controller
         'damage_pic' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'purchaseproof' => 'nullable',
         'is_featured' => 'nullable',
-        // 'featured_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        'featured_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
         if ($validator->fails()) {
@@ -91,37 +94,40 @@ class ProductController extends Controller
                 'errors' => $validator->errors()
             ]);
         }
-        // $itemImage = time().'.'.$request->Item_image->extension();  
-        // $request->Item_image->move(public_path('images'), $itemImage);
-        // $featuredImage = time().'.'.$request->featured_image->extension();  
-        // $request->featured_image->move(public_path('images'), $featuredImage);
-        // $damageImage = "";
-        // if($request->has('damage_pic')){
-        //     $damageImage = time().'.'.$request->damage_pic->extension();  
-        //     $request->damage_pic->move(public_path('images'), $damageImage);
-        // }
+        $itemImage = time().'.'.$request->Item_image->extension();
+        $request->Item_image->move(public_path('images'), $itemImage);
+        $featuredImage = time().'.'.$request->featured_image->extension();
+        $request->featured_image->move(public_path('images'), $featuredImage);
+        $damageImage = "";
+        if($request->has('damage_pic')){
+            $damageImage = time().'.'.$request->damage_pic->extension();
+            $request->damage_pic->move(public_path('images'), $damageImage);
+        }
         $productCreate = $this->model::create([
             'Item_name' => $request->Item_name,
             'Item_price' => $request->Item_price,
             'brand_id' => $request->brand_id,
             'user_id' => $request->user_id,
             'Item_mode' => $request->Item_mode,
-            // 'Item_image' => $itemImage,
+            'Item_image' => $itemImage,
             'views' => 0,
             'rental_price_week' => $request->rental_price_week,
             'rental_price_oneday' => $request->rental_price_oneday,
             'category_id' => $request->category_id,
+            'min_rent_day' => $request->min_rent_day,
+            'max_rent_day' => $request->max_rent_day,
             'size' => $request->size,
+            'status' => 'pending',
             'color' => $request->color,
             'insuretype' =>$request->insuretype,
             'item_condition' => $request->item_condition,
             'description' => $request->description,
             'tags' => $request->tags,
             'damageinfo' => $request->damageinfo,
-            // 'damage_pic' => $damageImage,
+            'damage_pic' => $damageImage,
             'purchaseproof' => $request->purchaseproof,
             'is_featured' => 'no',
-            // 'featured_image' => $featuredImage
+            'featured_image' => $featuredImage
         ]);
         if($productCreate){
             return response()->json([
@@ -184,7 +190,7 @@ class ProductController extends Controller
                 if(file_exists($image)){
                     unlink($image);
                 }
-                $itemImage = time().'.'.$request->Item_image->extension();  
+                $itemImage = time().'.'.$request->Item_image->extension();
                 $request->Item_image->move(public_path('images'), $itemImage);
                 $product->Item_image = $itemImage;
             }
@@ -193,7 +199,7 @@ class ProductController extends Controller
                 if(file_exists($image)){
                     unlink($image);
                 }
-                $featuredImage = time().'.'.$request->featured_image->extension();  
+                $featuredImage = time().'.'.$request->featured_image->extension();
                 $request->featured_image->move(public_path('images'), $featuredImage);
                 $product->featured_image = $featuredImage;
             }
@@ -202,7 +208,7 @@ class ProductController extends Controller
                 if(file_exists($image)){
                     unlink($image);
                 }
-                $damageImage = time().'.'.$request->damage_pic->extension();  
+                $damageImage = time().'.'.$request->damage_pic->extension();
                 $request->damage_pic->move(public_path('images'), $damageImage);
                 $product->damage_pic = $damageImage;
             }
@@ -215,6 +221,8 @@ class ProductController extends Controller
                 $product->rental_price_week = $request->rental_price_week;
                 $product->rental_price_oneday = $request->rental_price_oneday;
                 $product->category_id = $request->category_id;
+                $product->min_rent_day = $request->min_rent_day;
+                $product->max_rent_day = $request->max_rent_day;
                 $product->size = $request->size;
                 $product->color = $request->color;
                 $product->insuretype = $request->insuretype;
@@ -247,5 +255,39 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => true, 'message' => $e], 200);
         }
+    }
+
+    public function approvedProduct($id)
+    {
+        $product = $this->model::where('id', $id)->where('status' , 'pending')->first();
+        if(!empty($product)){
+            $product->update([
+                'status' => 'approved'
+            ]);
+            Notification::create([
+                'user_id' => $product->user_id,
+                'data' => 'Request for product has been approved',
+                'read_at' => null
+            ]);
+            return response()->json(['success' => true, 'message' => 'Product Has been approved'], 200);
+        }
+        return response()->json(['success' => true, 'message' => 'No pending product found']);
+
+    }
+    public function rejectProduct($id)
+    {
+        $product = $this->model::where('id', $id)->where('status' , 'pending')->first();
+        if($product){
+            $product->update([
+                'status' => 'rejected'
+            ]);
+            Notification::create([
+                'user_id' => $product->user_id,
+                'data' => 'Request for product has been rejected',
+                'read_at' => null
+            ]);
+            return response()->json(['success' => true, 'message' => 'Product Has been rejected'], 200);
+        }
+        return response()->json(['success' => true, 'message' => 'No pending product found']);
     }
 }

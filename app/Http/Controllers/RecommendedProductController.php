@@ -25,7 +25,7 @@ class RecommendedProductController extends Controller
     public function getRecommendedProducts()
     {
         try {
-            $recommend = $this->primary_model->getRecommended($this->setUserID());
+            $recommend = $this->primary_model->getRecommended();
             return response()->json(['success' => true, 'data' => $recommend], 200);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'something went wrong', 'Exception' => $e], 403);
@@ -45,11 +45,11 @@ class RecommendedProductController extends Controller
                 'errors' => $validate->errors()
             ]);
         }
-        try 
+        try
         {
             $result = $this->primary_model->setRecommended($request->search_query,$this->setUserID());
-            return response()->json(['success' => true, 'data' => $result], 200);    
-        } catch (\Exception $e) 
+            return response()->json(['success' => true, 'data' => $result], 200);
+        } catch (\Exception $e)
         {
             return response()->json(['success' => false, 'message' => 'something went wrong', 'Exception' => $e], 403);
         }
@@ -68,11 +68,11 @@ class RecommendedProductController extends Controller
                 'errors' => $validate->errors()
             ]);
         }
-        try 
+        try
         {
             $result = $this->product_model->searchProduct($request->search_query, $this->setUserID());
-            return response()->json(['success' => true, 'data' => $result], 200);    
-        } catch (\Exception $e) 
+            return response()->json(['success' => true, 'data' => $result], 200);
+        } catch (\Exception $e)
         {
             return response()->json(['success' => false, 'message' => 'something went wrong', 'Exception' => $e], 403);
         }

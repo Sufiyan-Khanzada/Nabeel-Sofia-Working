@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             $table->string('featured_image');
+            $table->integer('min_rent_day');
+            $table->integer('max_rent_day');
+            $table->string('status');
         });
     }
 

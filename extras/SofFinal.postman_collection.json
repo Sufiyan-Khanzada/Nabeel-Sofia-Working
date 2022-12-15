@@ -1,0 +1,1755 @@
+{
+	"info": {
+		"_postman_id": "673f5eea-f3b1-48d3-9053-544f07fda18b",
+		"name": "Sofia Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Recommended",
+			"item": [
+				{
+					"name": "get-recommended-products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/recommeded-products",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"recommeded-products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add-recommended-products",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "search_query",
+									"value": "brand_name",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/add-recommended-products",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"add-recommended-products"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"item": [
+				{
+					"name": "search-product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "search_query",
+									"value": "Name",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/search-product",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"search-product"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Filter",
+			"item": [
+				{
+					"name": "filter-product",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "search_query",
+									"value": "test",
+									"type": "default",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/filter-product?min_price=&max_price=&category=Category&sub_category=Sub Category&tags=Beg&color=color",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"filter-product"
+							],
+							"query": [
+								{
+									"key": "min_price",
+									"value": ""
+								},
+								{
+									"key": "max_price",
+									"value": ""
+								},
+								{
+									"key": "category",
+									"value": "Category"
+								},
+								{
+									"key": "sub_category",
+									"value": "Sub Category"
+								},
+								{
+									"key": "tags",
+									"value": "Beg"
+								},
+								{
+									"key": "color",
+									"value": "color"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Reviews",
+			"item": [
+				{
+					"name": "add-review",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "product_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "reviews",
+									"value": "anything here",
+									"type": "text"
+								},
+								{
+									"key": "review_image",
+									"type": "file",
+									"src": "/home/nabeel/Downloads/E-lLA6qWUAAyqhd.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/add-reviews",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"add-reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-reviews",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "product_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "5",
+									"type": "text"
+								},
+								{
+									"key": "reviews",
+									"value": "updated",
+									"type": "text"
+								},
+								{
+									"key": "review_image",
+									"type": "file",
+									"src": "/C:/Users/ASC/Downloads/WhatsApp Image 2022-11-22 at 3.40.48 AM.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/update-reviews/6",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"update-reviews",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all-reviews-by-product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/reviews-by-product/23",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"reviews-by-product",
+								"23"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "single-review",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/single-review/5",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"single-review",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all-reviews-by-user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/reviews-by-user/31",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"reviews-by-user",
+								"31"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reviews-for-user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/reviews-for-user/13",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"reviews-for-user",
+								"13"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rented",
+			"item": [
+				{
+					"name": "Request Rented",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "buyer_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "seller_id",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "product_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "78",
+									"type": "text"
+								},
+								{
+									"key": "from",
+									"value": "22-12-2022",
+									"type": "text"
+								},
+								{
+									"key": "to",
+									"value": "30-12-2022",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/request-rental/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"request-rental",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Rented",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/approve-rental/5",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"approve-rental",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Rented",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/reject-rental/5",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"reject-rental",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Availability",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/available-product/3?from=8-12-2022&to=15-12-2022",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"available-product",
+								"3"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "8-12-2022"
+								},
+								{
+									"key": "to",
+									"value": "15-12-2022"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "return-product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/return-product/1",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"return-product",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "owner-usage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "buyer_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "seller_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "product_id",
+									"value": "21",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "from",
+									"value": "29-11-2022",
+									"type": "text"
+								},
+								{
+									"key": "to",
+									"value": "5-12-2022",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/owner-usage",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"owner-usage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rented-product-by-seller",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/rented-product-by-seller/1",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"rented-product-by-seller",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rented-product-by-buyer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/rented-product-by-buyer/1",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"rented-product-by-buyer",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chat",
+			"item": [
+				{
+					"name": "Get Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/chat/users",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Message",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/chat/message/1",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"message",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "sender_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "receiver_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "Chcekinsajnan",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/chat/send",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Message",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/chat/refresh",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"chat",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trending",
+			"item": [
+				{
+					"name": "add trending",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/product-trending/18",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"product-trending",
+								"18"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "trending-product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/trending-product/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"trending-product",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "add-category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "checking",
+									"type": "default"
+								},
+								{
+									"key": "is_child",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "child_of",
+									"value": "4",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/add-category",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"add-category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit-category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "brand_name",
+									"type": "default"
+								},
+								{
+									"key": "is_child",
+									"value": "0",
+									"type": "default"
+								},
+								{
+									"key": "child_of",
+									"value": "",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/edit-category/1",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"edit-category",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-category",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/delete-category/2",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"delete-category",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all-parents-category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/all-parents-category",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"all-parents-category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all-child-categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/all-child-category",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"all-child-category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "single-category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/single-category/2",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"single-category",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "child-and-parents-category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/relation-category/1",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"relation-category",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "add-product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Item_name",
+									"value": "aknskd",
+									"type": "default"
+								},
+								{
+									"key": "Item_price",
+									"value": "277",
+									"type": "default"
+								},
+								{
+									"key": "brand_id",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "Item_mode",
+									"value": "perday",
+									"type": "default"
+								},
+								{
+									"key": "Item_image",
+									"type": "file",
+									"src": "/home/nabeel/Downloads/E-lLA6qWUAAyqhd.jpg"
+								},
+								{
+									"key": "rental_price_week",
+									"value": "121",
+									"type": "default"
+								},
+								{
+									"key": "rental_price_oneday",
+									"value": "12",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "size",
+									"value": "12",
+									"type": "default"
+								},
+								{
+									"key": "color",
+									"value": "sdad",
+									"type": "default"
+								},
+								{
+									"key": "insuretype",
+									"value": "asda ada",
+									"type": "default"
+								},
+								{
+									"key": "item_condition",
+									"value": "10",
+									"type": "default"
+								},
+								{
+									"key": "description",
+									"value": "asdad fa sad asdad ",
+									"type": "default"
+								},
+								{
+									"key": "tags",
+									"value": "tags, color",
+									"type": "default"
+								},
+								{
+									"key": "damageinfo",
+									"value": "asd",
+									"type": "default"
+								},
+								{
+									"key": "damage_pic",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "purchaseproof",
+									"value": "sadasd",
+									"type": "default"
+								},
+								{
+									"key": "is_featured",
+									"value": "no",
+									"type": "text"
+								},
+								{
+									"key": "featured_image",
+									"type": "file",
+									"src": "/home/nabeel/Downloads/E-lLA6qWUAAyqhd.jpg"
+								},
+								{
+									"key": "min_rent_day",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "max_rent_day",
+									"value": "8",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/insert-product/",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"insert-product",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit-product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Item_name",
+									"value": "aknskd",
+									"type": "default"
+								},
+								{
+									"key": "Item_price",
+									"value": "277",
+									"type": "default"
+								},
+								{
+									"key": "brand_id",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "Item_mode",
+									"value": "perday",
+									"type": "default"
+								},
+								{
+									"key": "Item_image",
+									"type": "file",
+									"src": "/C:/Users/ASC/Downloads/WhatsApp Image 2022-11-22 at 3.40.48 AM.jpeg"
+								},
+								{
+									"key": "rental_price_week",
+									"value": "121",
+									"type": "default"
+								},
+								{
+									"key": "rental_price_oneday",
+									"value": "12",
+									"type": "default"
+								},
+								{
+									"key": "category_id",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "size",
+									"value": "12",
+									"type": "default"
+								},
+								{
+									"key": "color",
+									"value": "sdad",
+									"type": "default"
+								},
+								{
+									"key": "insuretype",
+									"value": "asda ada",
+									"type": "default"
+								},
+								{
+									"key": "item_condition",
+									"value": "10",
+									"type": "default"
+								},
+								{
+									"key": "description",
+									"value": "asdad fa sad asdad ",
+									"type": "default"
+								},
+								{
+									"key": "tags",
+									"value": "tags, color",
+									"type": "default"
+								},
+								{
+									"key": "damageinfo",
+									"value": "asd",
+									"type": "default"
+								},
+								{
+									"key": "damage_pic",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "purchaseproof",
+									"value": "sadasd",
+									"type": "default"
+								},
+								{
+									"key": "is_featured",
+									"value": "no",
+									"type": "text"
+								},
+								{
+									"key": "featured_image",
+									"type": "file",
+									"src": "/C:/Users/ASC/Downloads/days.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/update_product/22",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"update_product",
+								"22"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/delete-product/22",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"delete-product",
+								"22"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all-products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/get-products",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"get-products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "single-product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/single-product/22",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"single-product",
+								"22"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "products-by-user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/product-by-user/4",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"product-by-user",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "approve-product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/approve-product/1",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"approve-product",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reject-product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/reject-product/2",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"reject-product",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Brands",
+			"item": [
+				{
+					"name": "add-brand",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "checking4",
+									"type": "default"
+								},
+								{
+									"key": "status",
+									"value": "whitelist",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/add-brand",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"add-brand"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit-brand",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "brand_name",
+									"type": "default"
+								},
+								{
+									"key": "status",
+									"value": "whitelist",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/edit-brand/1",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"edit-brand",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-brand",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/delete-brand/6",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"delete-brand",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "single-brand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/single-brand/5",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"single-brand",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Favourites",
+			"item": [
+				{
+					"name": "add-favourites",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "product_id",
+									"value": "12",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/add-favourite",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"add-favourite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-favourites",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "31",
+									"type": "text"
+								},
+								{
+									"key": "product_id",
+									"value": "23",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "reviews",
+									"value": "anything here",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/delete-favourite/1",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"delete-favourite",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-favourites",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "31",
+									"type": "text"
+								},
+								{
+									"key": "product_id",
+									"value": "23",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "reviews",
+									"value": "anything here",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/get-favourite",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"get-favourite"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notification",
+			"item": [
+				{
+					"name": "get unread notification",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/get-unread-notification/2",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"get-unread-notification",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-notification",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/get-notification/17",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"get-notification",
+								"17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "notification-read",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/notification-read/3",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"notification-read",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if(pm.response.code == 200)\r",
+							"{\r",
+							"    pm.environment.set(\"token\", JSON.parse(responseBody).token);\r",
+							"\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "ludie.daugherty@example.net",
+							"type": "default"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/login",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "Bearer {{token}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "Authorization",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

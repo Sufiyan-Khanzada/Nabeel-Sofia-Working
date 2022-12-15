@@ -6,8 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use App\Notifications\RentNotification;
-use Illuminate\Support\Facades\Notification;
 
 class RentedProduct extends Model
 {
@@ -27,6 +25,13 @@ class RentedProduct extends Model
     }
     public function requestrent($request)
     {
+        $pro = Products::where('id', $request->product_id)->get(['min_rent_day', 'max_rent_day'])->toArray();
+        $fromDate = Carbon::parse($request->from);
+        $toDate = Carbon::parse($request->to);
+        $diffReq = $fromDate->diffInDays($toDate);
+        if($diffReq < $pro[0]['min_rent_day'] || $diffReq > $pro[0]['max_rent_day']){
+            return response()->json(['error' => true, 'message' => 'minimum rent period for this product is '.$pro[0]['min_rent_day'].' and maximum rent period for this product is '.$pro[0]['max_rent_day']], 400);
+        }
         $product = RentedProduct::where('request_status', 'approved')
             ->where('product_id', $request->product_id)
             ->whereDate('from','>=',date('Y-m-d',strtotime($request->from)))
@@ -72,7 +77,16 @@ class RentedProduct extends Model
                 ]);
                 $prod = Products::where('id', $request->product_id)->first();
                 $user = User::where('id', $request->buyer_id)->first();
-                Notification::send($user, new RentNotification($user->name, $prod->Item_name));
+                Notification::create([
+                    'user_id' => $request->seller_id,
+                    'data' => $user->name.' wants to rent your product '.$prod->Item_name,
+                    'read_at' => null
+                ]);
+                Notification::create([
+                    'user_id' => $request->buyer_id,
+                    'data' => 'Request sent: waiting for vendor for approval.',
+                    'read_at' => null
+                ]);
                 return response()->json(['success' => true, 'data' => $rent], 200);
             } catch (\Exception $th) {
                 return response()->json(['error' => true, 'message' => $th], 406);
@@ -86,6 +100,11 @@ class RentedProduct extends Model
         if ($reject->request_status == "pending") {
             $reject->update([
                 'request_status' => 'rejected'
+            ]);
+            Notification::create([
+                'user_id' => $reject->buyer_id,
+                'data' => 'Request for product rent has been rejected',
+                'read_at' => null
             ]);
             return response()->json(['success' => true, 'message' => 'Request for product rent has been rejected'], 200);
         } else {
@@ -101,6 +120,11 @@ class RentedProduct extends Model
                 'request_status' => 'approved',
                 'product_status' => 'waiting for shipment'
 
+            ]);
+            Notification::create([
+                'user_id' => $approve->buyer_id,
+                'data' => 'Request for product rent has been approved',
+                'read_at' => null
             ]);
             return response()->json(['success' => true, 'message' => 'Request for product rent has been approved'], 200);
         } else {

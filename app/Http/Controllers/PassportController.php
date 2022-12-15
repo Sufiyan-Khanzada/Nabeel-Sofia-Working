@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use Validator;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -23,6 +24,31 @@ class PassportController extends Controller
         ], 200);
 }
 
+public function userUnreadNotification($id)
+{
+    $notification = Notification::where('user_id', $id)->where('read_at', null)->orderBy('created_at', 'DESC')->get();
+    return response()->json(['success' => true, 'data' => $notification, 'count' => count($notification)], 200);
+
+}
+
+public function readNotification($id){
+    $notification = Notification::where('id', $id)->where('read_at', null)->first();
+    if(!$notification)
+    {
+        return response()->json(['success' => true, 'message' => 'no notifications yet']);
+    }
+    $notification->update(['read_at' => now()]);
+    return response()->json(['success' => true, 'data' => $notification], 200);
+}
+
+public function userNotification($id){
+    $notification = Notification::where('user_id', $id)->orderBy('created_at', 'DESC')->get();
+    if(!$notification)
+    {
+        return response()->json(['success' => true, 'message' => 'no notifications yet']);
+    }
+    return response()->json(['success' => true, 'data' => $notification], 200);
+}
 public function all_branded()
     {
         $user = User::select('id','profile','name')->where('featured','yes')->get();;
@@ -48,18 +74,18 @@ public function all_branded()
             'password' => 'required',
             'confirm_password' => 'same:password|required',
             'lastname' => 'required|string',
-            'postalcode' => 'nullable|string', 
-            'city' => 'nullable|string', 
+            'postalcode' => 'nullable|string',
+            'city' => 'nullable|string',
             'address' => 'nullable|string',
-            'phone' => 'nullable|string', 
+            'phone' => 'nullable|string',
             'insuretype' => 'nullable|string',
             'cnic_back' => 'nullable',
             'cnic_front' => 'nullable',
             'payment' => 'nullable',
-            'privacypolicy' => 'nullable|string', 
+            'privacypolicy' => 'nullable|string',
             'termscondition' => 'nullable|string',
             'profile' => 'nullable',
-            
+
         ];
 
         $validator = Validator::make($input, $validate_data);
@@ -71,7 +97,7 @@ public function all_branded()
                 'errors' => $validator->errors()
             ]);
         }
- 
+
 
 
         // $user = User::create([
@@ -82,12 +108,12 @@ public function all_branded()
 
             //  $imageName="";
             //  $imagepath="https://testlink.code7labs.com/storage/app/public/uploads/profile";
-        
+
             //  $imageName1="";
             //  $imagepath1="https://testlink.code7labs.com/storage/app/public/uploads/media_files";
 
             //  $imageName2="";
-            //  $imagepath2="https://testlink.code7labs.com/storage/app/public/uploads/media_files";   
+            //  $imagepath2="https://testlink.code7labs.com/storage/app/public/uploads/media_files";
 
             // $images=$request->file('profile');
             // $imagepath="https://testlinks.code7labs.com/storage/app/public/uploads/cars";
@@ -136,13 +162,13 @@ public function all_branded()
             $user->profile=$request->profile;
             $user->save();
 
-         
+
         return response()->json([
             'status' => true,
             'message' => 'User registered succesfully, Use Login method to receive token.'
         ], 200);
     }
- 
+
     /**
      * Login user.
      *
@@ -158,7 +184,7 @@ public function all_branded()
         ];
 
         $validator = Validator::make($input, $validate_data);
-        
+
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -170,7 +196,7 @@ public function all_branded()
         // authentication attempt
         if (auth()->attempt($input)) {
             $token = auth()->user()->createToken('passport_token')->accessToken;
-            
+
             return response()->json([
                 'status' => true,
                 'message' => 'User login succesfully, Use token to authenticate.',
@@ -225,30 +251,30 @@ public function all_branded()
     {
 
          $input = $request->all();
-         
+
         //  $images=$request->file('');
 
 
-            
+
         //      $imageName="";
         //      $imagepath="https://testlink.code7labs.com/storage/app/public/uploads/profile";
-        
+
         //      $imageName1="";
         //      $imagepath1="https://testlink.code7labs.com/storage/app/public/uploads/cnic";
 
         //      $imageName2="";
-        //      $imagepath2="https://testlink.code7labs.com/storage/app/public/uploads/cnic";   
+        //      $imagepath2="https://testlink.code7labs.com/storage/app/public/uploads/cnic";
 
         //      $images=$request->file('profile');
         //      $images1=$request->file('cnic_back');
         //      $images2=$request->file('cnic_front');
-            
-
-           
-            
 
 
-         
+
+
+
+
+
         //  if($images!='' && $images!='' && $imsgrd!=''){
 
 
@@ -265,8 +291,8 @@ public function all_branded()
             // $full_image1=$imagepath1."/".$imageName1;
 
 
-            
-           
+
+
             // $newname2=rand().'.'.$images2->getClientOriginalExtension();
             // $images2->move('storage/app/public/uploads/cnic',$newname2);
             // $imageName2=$imageName2.$newname2;
@@ -294,22 +320,22 @@ public function all_branded()
         //     // $user->profile=$input['profile']=$full_image;
         //     $user->save();
 
-            
+
         //     return response()->json([
         //     'status' => true,
         //     'message' => 'User Details Updated Successfully.'
         // ], 200);
 
-                
+
         //     }
-            
-           
-            
+
+
+
             $user = new User();
             $user = User::find($id);
-           
+
          if($user){
-           
+
             $user->name=$request->name;
            // $user->email=$request->email;
             // $user->password=Hash::make($input['password']);
@@ -333,29 +359,29 @@ public function all_branded()
             $user->save();
 
 
-           
-            
+
+
              return response()->json([
             'status' => true,
             'message' => 'User Details Updated Successfully.'
         ], 200);
 
-            
-         } 
+
+         }
          else{
              return response()->json([
             'status' => true,
             'message' => 'User Not Found.'
         ], 404);
- 
-             
+
+
          }
-       
-         
-   
+
+
+
     }
-    
-    
+
+
     public function show_single_user(Request $request , $id)
     {
          $user = User::find($id);

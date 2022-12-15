@@ -67,9 +67,7 @@ Route::controller(RecommendedProductController::class)->group(function(){
 });
 Route::middleware('auth:api')->group(function (){
     Route::controller(RecommendedProductController::class)->group(function(){
-        Route::get('recommeded-products', 'getRecommendedProducts');
         Route::post('add-recommended-products', 'setRecommendedProducts');
-        Route::post('search-product', 'searchProduct');
     });
 });
 
@@ -137,5 +135,10 @@ Route::post('product-trending/{id}', [ProductController::class, 'productCount'])
 Route::middleware('auth:api')->group(function () {
     Route::get('user-stats/{id}', [PassportController::class, 'statsUser']);
     Route::post('user-detail', [PassportController::class, 'userDetail']);
+    Route::get('get-unread-notification/{id}', [PassportController::class, 'userUnreadNotification']);
+    Route::get('get-notification/{id}', [PassportController::class, 'userNotification']);
+    Route::post('notification-read/{id}', [PassportController::class, 'readNotification']);
+    Route::post('approve-product/{id}', [ProductController::class, 'approvedProduct']);
+    Route::post('reject-product/{id}', [ProductController::class, 'rejectProduct']);
     Route::post('logout', [PassportController::class, 'logout']);
 });
