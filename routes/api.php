@@ -90,7 +90,7 @@ Route::middleware('auth:api')->group(function (){
     });
 });
 // Filter product API
-    Route::post('filter-product', FilterController::class);
+    Route::get('filter-product', FilterController::class);
 
 Route::middleware('auth:api')->group(function (){
     Route::controller(ChatController::class)->group(function(){

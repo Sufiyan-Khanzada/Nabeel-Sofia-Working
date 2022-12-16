@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "673f5eea-f3b1-48d3-9053-544f07fda18b",
+		"_postman_id": "0659113f-09ee-4f88-af5e-1942fd285885",
 		"name": "Sofia Collection",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -162,17 +162,10 @@
 						"header": [],
 						"body": {
 							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "search_query",
-									"value": "test",
-									"type": "default",
-									"disabled": true
-								}
-							]
+							"formdata": []
 						},
 						"url": {
-							"raw": "{{BaseUrl}}/api/filter-product?min_price=&max_price=&category=Category&sub_category=Sub Category&tags=Beg&color=color",
+							"raw": "{{BaseUrl}}/api/filter-product?min_price=0&max_price=900&category=Rolex&tags=any&color=hoaaf",
 							"host": [
 								"{{BaseUrl}}"
 							],
@@ -183,27 +176,23 @@
 							"query": [
 								{
 									"key": "min_price",
-									"value": ""
+									"value": "0"
 								},
 								{
 									"key": "max_price",
-									"value": ""
+									"value": "900"
 								},
 								{
 									"key": "category",
-									"value": "Category"
-								},
-								{
-									"key": "sub_category",
-									"value": "Sub Category"
+									"value": "Rolex"
 								},
 								{
 									"key": "tags",
-									"value": "Beg"
+									"value": "any"
 								},
 								{
 									"key": "color",
-									"value": "color"
+									"value": "hoaaf"
 								}
 							]
 						}
@@ -1322,14 +1311,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{BaseUrl}}/api/approve-product/1",
+							"raw": "{{BaseUrl}}/api/approve-product/2",
 							"host": [
 								"{{BaseUrl}}"
 							],
 							"path": [
 								"api",
 								"approve-product",
-								"1"
+								"2"
 							]
 						}
 					},
@@ -1693,7 +1682,7 @@
 					"formdata": [
 						{
 							"key": "email",
-							"value": "ludie.daugherty@example.net",
+							"value": "laverne.schumm@example.net",
 							"type": "default"
 						},
 						{

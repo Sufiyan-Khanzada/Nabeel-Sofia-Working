@@ -18,28 +18,28 @@ class FilterController extends Controller
         try {
             $min = $request->has('min_price') && !empty($request->min_price) ? $request->min_price : 0;
             $max = $request->has('max_price') && !empty($request->max_price) ? $request->max_price : 100000;
-            $query::with('categories');
+            $query = Products::with('categories')->where('status', 'approved');
             if($request->has('min_price') && $request->has('max_price')){
                 $query->whereBetween('Item_price', [$min, $max]);
+                // dd($query->get()->toArray());
             }
             if($request->has('category')){
-                $query->categories->where('name','=',"$request->category")
-                    ->where('is_child', 0);
-                $id = $query->categories->where('name','=',"$request->category")
-                ->where('is_child', 0)->get('id');
-            }
-            if($request->has('sub_category')){
-                $query->categories->where('name','=',"$request->category")
-                ->where('is_child', 1)->where('child_of', $id);
+                $query->whereHas('categories', function($q) use($request){
+                    $q->where('name', $request->category);
+                });
             }
             if($request->has('tags')){
                 $query->where('tags','LIKE', "%$request->tags%");
+            }
+            if($request->has('color')){
+                $query->where('color', "$request->color");
+                dd($query->get()->toArray());
             }
             // if(count($query->get()) > 8)
             // {
             //     return $query->paginate(8);
             // }
-            return $query->get();
+            // return $query->get();
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'something went wrong', 'Exception' => $e], 403);
         }
