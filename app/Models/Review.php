@@ -64,7 +64,6 @@ class Review extends Model
             {
                 return response()->json(['error' => true, 'message' => 'You are not allowed to give reviews instantly'], 422);
             }
-            try {
                 $final = $this->create([
                     'user_id' => auth()->id(),
                     'product_id' => $request->product_id,
@@ -73,9 +72,9 @@ class Review extends Model
                     'review_image' => $this->reviewImage($request->review_image)
                 ]);
                 return response()->json(['success' => true, 'data' => $final], 200);
-            } catch (\Exception $th) {
-                return response()->json(['error' => true, 'message' => $th], 403);
-            }
+        }
+        else{
+            return response()->json(['error' => true, 'message' => 'something went wrong'], 403);
         }
     }
 

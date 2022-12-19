@@ -21,7 +21,6 @@ class FilterController extends Controller
             $query = Products::with('categories')->where('status', 'approved');
             if($request->has('min_price') && $request->has('max_price')){
                 $query->whereBetween('Item_price', [$min, $max]);
-                // dd($query->get()->toArray());
             }
             if($request->has('category')){
                 $query->whereHas('categories', function($q) use($request){
@@ -33,13 +32,8 @@ class FilterController extends Controller
             }
             if($request->has('color')){
                 $query->where('color', "$request->color");
-                dd($query->get()->toArray());
             }
-            // if(count($query->get()) > 8)
-            // {
-            //     return $query->paginate(8);
-            // }
-            // return $query->get();
+            return $query->get();
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'something went wrong', 'Exception' => $e], 403);
         }
