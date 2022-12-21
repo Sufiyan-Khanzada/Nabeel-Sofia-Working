@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PasswordReset as MailPasswordReset;
 use App\Models\Notification;
 use Validator;
 use App\Models\User;
+use App\Notifications\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\TokenRepository;
@@ -210,6 +212,35 @@ public function all_branded()
         }
     }
 
+    public function password_reset(Request $request)
+    {
+        $user = User::where('email',$request->email)->first();
+        if($user){
+            $otp = rand(0000, 9999);
+            \DB::table('password_resets')->updateOrInsert([
+                'email' => $user->email],
+                ['token' => $otp
+            ]);
+            \Mail::to($request->email)->send(new MailPasswordReset($otp, $user->name));
+            return response()->json(['success' => true, 'message' => 'OTP is send to your email, please verify OTP to continue'], 200);
+        }
+    }
+    public function verifyOtp(Request $request){
+        $verify = \DB::table('password_resets')->where('email', $request->email)
+        ->where('token', $request->otp)
+        ->first();
+        if($verify){
+            if(isset($request->password) && isset($request->confirm_password) && $request->password == $request->confirm_password){
+                User::where('email', $request->email)->update([
+                    'password' => \Hash::make($request->password)
+                ]);
+            \DB::table('password_resets')->where('email', $request->email)->delete();
+            return response()->json(['success' => true, 'message' => 'Password Reset Successfully, Please Login to continue'], 200);
+            }
+            return response()->json(['error' => true, 'message' => 'password doesn\'t match'], 200);
+        }
+        return response()->json(['error' => true, 'message' => 'something went wrong'], 400);
+    }
     /**
      * Access method to authenticate.
      *
