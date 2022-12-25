@@ -12,6 +12,15 @@ class Notification extends Model
     protected $fillable = [
         'user_id',
         'data',
-        'read_at'
+        'read_at',
+        'rented_id',
+        'product_id'
     ];
+
+    public function rented(){
+        return $this->hasMany(RentedProduct::class, 'id','rented_id');
+    }
+    public function products(){
+        return $this->hasMany(Products::class, 'id','product_id');
+    }
 }

@@ -139,6 +139,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('user-detail', [PassportController::class, 'userDetail']);
     Route::get('get-unread-notification/{id}', [PassportController::class, 'userUnreadNotification']);
     Route::get('get-notification/{id}', [PassportController::class, 'userNotification']);
+    Route::delete('delete-notification/{id}', [PassportController::class, 'deleteNotification']);
     Route::post('notification-read/{id}', [PassportController::class, 'readNotification']);
     Route::post('approve-product/{id}', [ProductController::class, 'approvedProduct']);
     Route::post('reject-product/{id}', [ProductController::class, 'rejectProduct']);

@@ -80,12 +80,15 @@ class RentedProduct extends Model
                 Notification::create([
                     'user_id' => $request->seller_id,
                     'data' => $user->name.' wants to rent your product '.$prod->Item_name,
-                    'read_at' => null
+                    'read_at' => null,
+                    'rented_id' => $rent->id,
+                    'product_id' => $request->product_id,
                 ]);
                 Notification::create([
                     'user_id' => $request->buyer_id,
                     'data' => 'Request sent: waiting for vendor for approval.',
-                    'read_at' => null
+                    'read_at' => null,
+                    'product_id' => $request->product_id
                 ]);
                 return response()->json(['success' => true, 'data' => $rent], 200);
             } catch (\Exception $th) {

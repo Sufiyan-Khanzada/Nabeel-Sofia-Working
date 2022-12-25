@@ -24,7 +24,7 @@ class FilterController extends Controller
             }
             if($request->has('category')){
                 $query->whereHas('categories', function($q) use($request){
-                    $q->where('name', $request->category);
+                    $q->where('id', $request->category);
                 });
             }
             if($request->has('tags')){

@@ -33,6 +33,18 @@ public function userUnreadNotification($id)
 
 }
 
+public function deleteNotification($id){
+    $notification = Notification::where('id', $id)->where('user_id', auth()->id())->first();
+    if($notification)
+    {
+        $notification->delete();
+        return response()->json(['success' => true, 'message' => 'notification removed!'], 200);
+    }
+    else{
+        return response()->json(['error' => true, 'message' => 'no notification found'], 404);
+    }
+}
+
 public function readNotification($id){
     $notification = Notification::where('id', $id)->where('read_at', null)->first();
     if(!$notification)
@@ -44,7 +56,7 @@ public function readNotification($id){
 }
 
 public function userNotification($id){
-    $notification = Notification::where('user_id', $id)->orderBy('created_at', 'DESC')->get();
+    $notification = Notification::with(['rented', 'products'])->where('user_id', $id)->get();
     if(!$notification)
     {
         return response()->json(['success' => true, 'message' => 'no notifications yet']);

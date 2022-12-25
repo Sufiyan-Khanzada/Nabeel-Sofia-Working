@@ -143,7 +143,7 @@ class ProductController extends Controller
 
     public function show_product($id)
     {
-        $products = products::find($id);
+        $products = products::with('users')->find($id);
 
         if (is_null($products)) {
             return response()->json([

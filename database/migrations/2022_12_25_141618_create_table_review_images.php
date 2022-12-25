@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('notifications', function (Blueprint $table) {
+        Schema::create('review_images', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->text('data');
-            $table->integer('rented_id')->nullable();
-            $table->integer('product_id')->nullable();
-            $table->timestamp('read_at')->nullable();
+            $table->integer('review_id');
+            $table->string('image');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('review_images');
     }
 };

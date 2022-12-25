@@ -19,21 +19,14 @@ class Review extends Model
         return $this->hasMany(User::class, 'id', 'user_id');
     }
 
-    protected $fillable = [
-        'user_id', 'product_id', 'rating', 'reviews', 'review_image'
-    ];
-    public function reviewImage($review)
+    public function review_images()
     {
-        if(!empty($review)){
-            $image = time().'.'.$review->extension();
-            $review->move(public_path('reviews'), $image);
-            $review = $image;
-            return $review;
-        }
-        else{
-            return null;
-        }
+        return $this->hasMany(ReviewImage::class, 'review_id', 'id');
     }
+
+    protected $fillable = [
+        'user_id', 'product_id', 'rating', 'reviews'
+    ];
     public function addReviews($request)
     {
         $owner = Products::where('user_id',auth()->id())
@@ -69,9 +62,18 @@ class Review extends Model
                     'product_id' => $request->product_id,
                     'rating' => $request->rating,
                     'reviews' => $request->reviews,
-                    'review_image' => $this->reviewImage($request->review_image)
                 ]);
-                return response()->json(['success' => true, 'data' => $final], 200);
+                foreach ($request->file('images') as $imagefile) {
+                    $image = new ReviewImage;
+                    $path = time().'.'.$imagefile->extension();
+                    $imagefile->move(public_path('reviews'), $path);
+                    $image->image = config('app.url')."/reviews/".$path;
+                    $image->review_id = $final->id;
+                    $image->save();
+                  }
+                $id = $final->id;
+                $result = Review::with('review_images')->where('id', $final->id)->get();
+                return response()->json(['success' => true, 'data' => $result], 200);
         }
         else{
             return response()->json(['error' => true, 'message' => 'something went wrong'], 403);
@@ -85,10 +87,6 @@ class Review extends Model
         ->find($id);
         if($review->updated_at == $review->created_at)
         {
-            if($request->has('review_image'))
-            {
-                $review->review_image = $this->reviewImage($request->review_image);
-            }
             $review->rating = $request->rating;
             $review->reviews = $request->reviews;
             $review->save();
@@ -101,7 +99,7 @@ class Review extends Model
 
     public function allByUser($id)
     {
-        $result = $this::where('user_id', $id)->get();
+        $result = $this::with('review_images')->where('user_id', $id)->get();
         if($result->isNotEmpty()){
             return response()->json(['success' => true, 'data' => $result], 200);
         }
@@ -109,7 +107,7 @@ class Review extends Model
     }
     public function allByProduct($id)
     {
-        $result = $this::where('product_id', $id)->get();
+        $result = $this::with('review_images')->where('product_id', $id)->get();
         if($result->isNotEmpty()){
             return response()->json(['success' => true, 'data' => $result, 'count' => $result->count()], 200);
         }
@@ -118,7 +116,7 @@ class Review extends Model
 
     public function singleReview($id)
     {
-        $result = $this::find($id);
+        $result = $this::with('review_images')->find($id);
         if($result){
             return response()->json(['success' => true, 'data' => $result], 200);
         }
@@ -127,7 +125,7 @@ class Review extends Model
 
     public function allReviewsForUser($id)
     {
-        $review = $this::whereHas('products', function($query) use($id){
+        $review = $this::with('review_images')->whereHas('products', function($query) use($id){
             $query->where('user_id', $id);
         })->get();
         $avg = $this::whereHas('products', function($query) use($id){
