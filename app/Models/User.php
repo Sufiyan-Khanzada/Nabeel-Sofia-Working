@@ -80,14 +80,20 @@ class User extends Authenticatable
     public function getMessages($id)
     {
         $user = User::where('id', auth()->user()->id)->first();
-        $userchat = $user->user_messages::with('messages')
-            ->where(['sender_id' => $user->id, 'receiver_id' => $id])
-            ->orWhere(['receiver_id' => $user->id, 'sender_id' => $id])
-            ->get()->pluck('id');
-        $chat = Message::with('user_messages')->whereIn('user_messages_id', $userchat)
-            ->orderBy('created_at', 'ASC')
-            ->get();
-        return $chat;
+        $userchat1 = UserMessage::with('messages')
+            ->where(['receiver_id' => auth()->id(), 'sender_id' => (int)$id])
+            ->get()->pluck('id')->toArray();
+        $userchat2 = UserMessage::with('messages')
+        ->where(['sender_id' => auth()->id(), 'receiver_id' => (int)$id])
+        ->get()->pluck('id')->toArray();
+        $userChat = array_merge($userchat1, $userchat2);
+            if(!empty($userChat)){
+                $chat = Message::with('user_messages')->whereIn('user_messages_id', $userChat)
+                    ->orderBy('created_at', 'ASC')
+                    ->get();
+                return $chat;
+            }
+            return;
     }
     public function sendMessages($sender, $receiver, $message)
     {
@@ -114,7 +120,13 @@ class User extends Authenticatable
     }
     public function getChatUsers()
     {
-        $chatusers = $this->whereNot('id', auth()->user()->id)->get();
+        $chatusers = $this::whereHas('user_messages', function($q){
+            $q->where('sender_id', auth()->id())
+            ->orWhere('receiver_id', auth()->id());
+        })
+        ->whereNot('id', auth()->id())
+        ->get();
+        // $chatusers = $this->whereNot('id', auth()->user()->id)->get();
         return $chatusers;
     }
 

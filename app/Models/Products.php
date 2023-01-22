@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
 class Products extends Model
 {
     use HasFactory;
@@ -34,7 +35,7 @@ class Products extends Model
         'is_featured',
         'featured_image'
      ];
-
+    
     public function categories()
     {
       return $this->hasMany(Category::class, 'id', 'category_id');
@@ -64,14 +65,19 @@ class Products extends Model
     }
      public function searchProduct($query, $id)
      {
-       $data = $this::with('categories')->where('Item_name', 'LIKE', "%$query%")->get();
+       $data = $this::with('categories','brands')->join('categories', 'products.category_id','categories.id')
+       ->whereLike('Item_name',$query)
+       ->orWhere('categories.name','LIKE', "%$query%")
+       ->get();
        if(!empty($data)){
         $data2 = $data->pluck('categories')->toArray();
-        foreach($data2 as $key => $value)
-        {
-          foreach($value as $k=> $v){
-            $recommended = new RecommendedProduct();
-            $recommended->setRecommended($v['name'], $id);
+        if(!empty($id)){
+          foreach($data2 as $key => $value)
+          {
+            foreach($value as $k=> $v){
+              $recommended = new RecommendedProduct();
+              $recommended->setRecommended($v['name'], $id);
+            }
           }
         }
          if(count($data) > 8)

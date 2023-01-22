@@ -115,7 +115,9 @@ class RentedProductController extends Controller
     public function getBuyingUser($id)
     {
         try {
-            $result = $this->model::with('products')->where('buyer_id', $id)->get();
+            $result = $this->model::with('products')->where('buyer_id', $id)
+            ->whereNot('seller_id',$id)
+            ->get();
             if($result->isNotEmpty())
             {
                 return response()->json(['success' => true, 'data' => $result], 200);
@@ -126,5 +128,12 @@ class RentedProductController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => true, 'message' => $e], 200);
         }
+    }
+
+    public function changeProductStatusBuyer(Request $request){
+
+    }
+    public function changeProductStatusSeller(Request $request){
+        
     }
 }

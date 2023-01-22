@@ -19,13 +19,12 @@ class RecommendedProductController extends Controller
     }
     public function setUserID()
     {
-        $this->user_id = auth()->user()->id;
-        return $this->user_id;
+        return auth()->id();
     }
-    public function getRecommendedProducts()
+    public function getRecommendedProducts(Request $request)
     {
         try {
-            $recommend = $this->primary_model->getRecommended();
+            $recommend = $this->primary_model->getRecommended($request->user_id);
             return response()->json(['success' => true, 'data' => $recommend], 200);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'something went wrong', 'Exception' => $e], 403);
@@ -35,7 +34,8 @@ class RecommendedProductController extends Controller
     public function setRecommendedProducts(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'search_query' => 'required'
+            'search_query' => 'required',
+            'user_id' => 'nullable'
         ]);
         if($validate->fails())
         {
@@ -47,7 +47,7 @@ class RecommendedProductController extends Controller
         }
         try
         {
-            $result = $this->primary_model->setRecommended($request->search_query,$this->setUserID());
+            $result = $this->primary_model->setRecommended($request->search_query,auth()->id());
             return response()->json(['success' => true, 'data' => $result], 200);
         } catch (\Exception $e)
         {
@@ -58,7 +58,8 @@ class RecommendedProductController extends Controller
     public function searchProduct(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'search_query' => 'required'
+            'search_query' => 'required',
+            'user_id' => 'nullable'
         ]);
         if($validate->fails())
         {
@@ -70,7 +71,7 @@ class RecommendedProductController extends Controller
         }
         try
         {
-            $result = $this->product_model->searchProduct($request->search_query, $this->setUserID());
+            $result = $this->product_model->searchProduct($request->search_query,$request->user_id);
             return response()->json(['success' => true, 'data' => $result], 200);
         } catch (\Exception $e)
         {

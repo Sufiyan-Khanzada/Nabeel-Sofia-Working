@@ -18,13 +18,13 @@ class FilterController extends Controller
         try {
             $min = $request->has('min_price') && !empty($request->min_price) ? $request->min_price : 0;
             $max = $request->has('max_price') && !empty($request->max_price) ? $request->max_price : 100000;
-            $query = Products::with('categories')->where('status', 'approved');
+            $query = Products::with('categories','brands')->where('status', 'approved');
             if($request->has('min_price') && $request->has('max_price')){
                 $query->whereBetween('Item_price', [$min, $max]);
             }
-            if($request->has('category')){
+            if($request->has('category_id')){
                 $query->whereHas('categories', function($q) use($request){
-                    $q->where('id', $request->category);
+                    $q->where('id', $request->category_id);
                 });
             }
             if($request->has('tags')){

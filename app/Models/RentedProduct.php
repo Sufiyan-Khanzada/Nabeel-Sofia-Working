@@ -118,12 +118,29 @@ class RentedProduct extends Model
     public function approverent($id)
     {
         $approve = RentedProduct::where('id', $id)->first();
+        $remaining = RentedProduct::where('product_id', $approve->product_id)
+        ->whereDate('from', Carbon::parse($approve->from)->format('Y-m-d'))
+        ->whereDate('to', Carbon::parse($approve->to)->format('Y-m-d'))
+        ->where('request_status','pending')
+        ->whereNot('id',$id)
+        ->get()->pluck('id','buyer_id');
+
         if ($approve->request_status == "pending") {
             $approve->update([
                 'request_status' => 'approved',
                 'product_status' => 'waiting for shipment'
 
             ]);
+            foreach ($remaining as $key => $value) {
+                RentedProduct::where('id',$value)->update([
+                    'request_status' => 'rejected'
+                ]);
+                Notification::create([
+                    'user_id' => $key,
+                    'data' => 'Request for product rent has been rejected',
+                    'read_at' => null
+                ]);
+            }
             Notification::create([
                 'user_id' => $approve->buyer_id,
                 'data' => 'Request for product rent has been approved',
