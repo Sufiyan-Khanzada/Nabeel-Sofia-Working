@@ -130,10 +130,18 @@ class RentedProductController extends Controller
         }
     }
 
-    public function changeProductStatusBuyer(Request $request){
-
+    public function changeProductStatusBuyer($id, Request $request){
+        try {
+            return $this->model->changeStatusBuyer($id, $request);
+        } catch (\Exception $e) {
+            return response()->json(['error' => true, 'message' => $e], 200);
+        }
     }
-    public function changeProductStatusSeller(Request $request){
-        
+    public function changeProductStatusSeller($id, Request $request){
+        try {
+            return $this->model->changeStatusSeller($id, $request);
+        } catch (\Exception $e) {
+            return response()->json(['error' => true, 'message' => $e], 200);
+        }
     }
 }

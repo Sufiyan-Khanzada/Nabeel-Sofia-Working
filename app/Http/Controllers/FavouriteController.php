@@ -17,7 +17,11 @@ class FavouriteController extends Controller
     public function index()
     {
         try {
-            $result= $this->model::with('products')->where('user_id', auth()->id())->get();
+            $result= $this->model::with('products')
+            ->whereHas('products', function($q){
+                $q->join('brands', 'brands.id', '=', 'products.brand_id');
+            })
+            ->where('user_id', auth()->id())->get();
             if($result)
             {
             return response()->json(['success' => true, 'data' => $result, 'count' => $result->count()], 200);

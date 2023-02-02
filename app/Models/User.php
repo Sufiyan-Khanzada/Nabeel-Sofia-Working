@@ -27,8 +27,8 @@ class User extends Authenticatable
         'firstname',
         'lastname',
         'username',
-        'city', 
-            'postalcode', 
+        'city',
+            'postalcode',
             'country',
             'address',
             'state',
@@ -36,11 +36,11 @@ class User extends Authenticatable
             'image',
             'cnic_front',
             'cnic_back',
-            'insuretype', 
-            'cpassword', 
+            'insuretype',
+            'cpassword',
             'proofid',
-            'payment', 
-            'confrimpass', 
+            'payment',
+            'confirmpass',
             'privacypolicy',
             'termscondition',
     ];
@@ -51,7 +51,13 @@ class User extends Authenticatable
      */
     protected $hidden = [
 
-        'remember_token',
+        'remember_token','password','cnic_front','cnic_back','insuretype',
+        'cpassword',
+        'proofid',
+        'payment',
+        'confrimpass',
+        'privacypolicy',
+        'termscondition',
     ];
 
     /**
@@ -71,6 +77,16 @@ class User extends Authenticatable
     public function user_messages()
     {
         return $this->belongsTo(UserMessage::class, 'id', 'sender_id');
+    }
+
+    public function sender()
+    {
+        return $this->belongsTo(UserMessage::class, 'id', 'sender_id');
+    }
+
+    public function receiver()
+    {
+        return $this->belongsTo(UserMessage::class, 'id', 'receiver_id');
     }
 
     public function rented_products()
@@ -120,14 +136,18 @@ class User extends Authenticatable
     }
     public function getChatUsers()
     {
-        $chatusers = $this::whereHas('user_messages', function($q){
-            $q->where('sender_id', auth()->id())
-            ->orWhere('receiver_id', auth()->id());
+        $chatusers = $this::with('receiver')->whereHas('receiver', function($q){
+            $q->where('receiver_id', auth()->id());
         })
-        ->whereNot('id', auth()->id())
-        ->get();
+        ->get()->pluck('receiver.sender_id')->toArray();
+        $chatusers2 = $this::with('sender')->whereHas('sender', function($q){
+            $q->where('sender_id', auth()->id());
+        })
+        ->get()->pluck('sender.receiver_id')->toArray();
+        $chatUsers = array_merge($chatusers, $chatusers2);
+        $users = $this::whereIn('id', $chatUsers)->get();
         // $chatusers = $this->whereNot('id', auth()->user()->id)->get();
-        return $chatusers;
+        return $users->makeHidden('confirmpass');
     }
 
     public function getRefreshMessage($request)

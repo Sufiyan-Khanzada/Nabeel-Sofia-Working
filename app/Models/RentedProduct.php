@@ -34,8 +34,8 @@ class RentedProduct extends Model
         }
         $product = RentedProduct::where('request_status', 'approved')
             ->where('product_id', $request->product_id)
-            ->whereDate('from','>=',date('Y-m-d',strtotime($request->from)))
-            ->whereDate('to','<=',date('Y-m-d',strtotime($request->to)))
+            ->whereDate('from','<=',date('Y-m-d',strtotime($request->from)))
+            ->whereDate('to','>=',date('Y-m-d',strtotime($request->to)))
             ->orderBy('from', 'ASC')
             ->get();
         if (!($product->isEmpty())) {
@@ -48,7 +48,7 @@ class RentedProduct extends Model
                 array_push($to, strtotime($value['to']));
             }
             return response()->json(['error' => true,
-            'message' => 'this product is not available from '.date('d-m-Y',reset($from)). ' to '.date('d-m-Y',end($to)).''], 404);
+            'message' => 'this product is not available from '.Carbon::parse(reset($from))->subDays(2)->format('Y-m-d'). ' to '.Carbon::parse(end($to))->addDays(2)->format('Y-m-d').''], 404);
         }
         else{
             $product = RentedProduct::where('request_status', 'pending')
@@ -216,7 +216,7 @@ class RentedProduct extends Model
                 }
             }
             return response()->json(['error' => true,
-            'message' => 'this product is not available from '.date('d-m-Y',reset($from)). ' to '.date('d-m-Y',end($to)).'',
+            'message' => 'this product is not available from '.Carbon::parse(reset($from))->subDays(2)->format('Y-m-d'). ' to '.Carbon::parse(end($to))->addDays(2)->format('Y-m-d').'',
             'data' => $date], 404);
         }
         else{
@@ -243,7 +243,7 @@ class RentedProduct extends Model
                 array_push($to, strtotime($value['to']));
             }
             return response()->json(['error' => true,
-            'message' => 'this product is not available from '.date('d-m-Y',reset($from)). ' to '.date('d-m-Y',end($to)).''], 404);
+            'message' => 'this product is not available from '.Carbon::parse(reset($from))->subDays(2)->format('Y-m-d'). ' to '.Carbon::parse(end($to))->addDays(2)->format('Y-m-d').''], 404);
         }
         else{
             try {
@@ -262,5 +262,41 @@ class RentedProduct extends Model
                 return response()->json(['error' => true, 'message' => $th], 406);
             }
         }
+    }
+
+    public function changeStatusBuyer($id, $request)
+    {
+        $product = RentedProduct::where('request_status', 'approved')
+            ->where('product_id', $request->product_id)
+            ->whereDate('from','>=',date('Y-m-d',strtotime(now())))
+            ->where('buyer_id', $request->buyer_id)
+            ->where('id', $id)
+            ->first();
+        if($product){
+            $product->update([
+                'product_status' => $request->status
+            ]);
+            return response()->json(['success' => true, 'data' => $product], 200);
+        }
+        return response()->json(['error' => true, 'message' => 'Something went wrong'], 400);
+
+    }
+
+    public function changeStatusSeller($id, $request)
+    {
+        $product = RentedProduct::where('request_status', 'approved')
+            ->where('product_id', $request->product_id)
+            ->whereDate('from','>=',date('Y-m-d',strtotime(now())))
+            ->where('seller_id', $request->seller_id)
+            ->where('id', $id)
+            ->first();
+        if($product){
+            $product->update([
+                'product_status' => $request->status
+            ]);
+            return response()->json(['success' => true, 'data' => $product], 200);
+        }
+        return response()->json(['error' => true, 'message' => 'Something went wrong'], 400);
+
     }
 }

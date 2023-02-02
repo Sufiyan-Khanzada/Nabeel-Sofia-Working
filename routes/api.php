@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PassportController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChatController;
@@ -92,6 +93,7 @@ Route::middleware('auth:api')->group(function (){
     });
 });
 // Filter product API
+Route::get('version/check', [Controller::class, 'CheckController']);
     Route::get('filter-product', FilterController::class);
 
 Route::middleware('auth:api')->group(function (){
@@ -113,6 +115,8 @@ Route::middleware('auth:api')->group(function (){
         Route::post('owner-usage', 'personalUse');
         Route::get('rented-product-by-seller/{id}', 'getSellingUser');
         Route::get('rented-product-by-buyer/{id}', 'getBuyingUser');
+        Route::post('change-status-buyer/{id}', 'changeProductStatusBuyer');
+        Route::post('change-status-seller/{id}', 'changeProductStatusSeller');
     });
 });
 
