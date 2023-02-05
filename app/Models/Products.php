@@ -35,7 +35,7 @@ class Products extends Model
         'is_featured',
         'featured_image'
      ];
-    
+
     public function categories()
     {
       return $this->hasMany(Category::class, 'id', 'category_id');
@@ -45,7 +45,7 @@ class Products extends Model
     {
       return $this->hasMany(User::class, 'id', 'user_id');
     }
-    
+
     public function reviews()
     {
         return $this->belongsTo(Review::class, 'id', 'product_id');
@@ -62,6 +62,11 @@ class Products extends Model
     public function rented_products()
     {
         return $this->belongsTo(RentedProduct::class, 'id', 'product_id');
+    }
+
+    public function product_images()
+    {
+        return $this->hasMany(ProductImage::class, 'product_id');
     }
      public function searchProduct($query, $id)
      {

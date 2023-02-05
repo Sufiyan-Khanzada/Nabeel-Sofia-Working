@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Validator;
-use App\Models\Products;
+use App\Models\{Products,ProductImage};
 use App\Models\Favourite;
 use App\Models\Notification;
 use Illuminate\Http\Request;
@@ -22,7 +22,7 @@ class ProductController extends Controller
     }
     public function allproducts()
     {
-        $products = $this->model::with(['categories', 'brands'])->where('status', 'approved')->get();
+        $products = $this->model::with(['product_images','categories', 'brands'])->where('status', 'approved')->get();
         return response()->json([
             'success' => true,
             'message' => 'Items Fetched SuccessFully.',
@@ -45,7 +45,7 @@ class ProductController extends Controller
     public function trendingProduct()
     {
         try {
-            $product = $this->model::where('views', '!=', 0)->where('status', 'approved')->with(['categories', 'brands'])->orderBy('views', 'DESC')->get();
+            $product = $this->model::with('product_images')->where('views', '!=', 0)->where('status', 'approved')->with(['categories', 'brands'])->orderBy('views', 'DESC')->get();
             // if(count($product) > 5)
             // {
             //     $product = $this->model::where('views', '>', 0)->orderBy('views', 'DESC')->paginate(5);
@@ -130,10 +130,17 @@ class ProductController extends Controller
             'featured_image' => $featuredImage
         ]);
         if($productCreate){
+            if($request->has('images')){
+                $images = [];
+                foreach($request->images as $image){
+                    array_push($images, ['product_id' => $productCreate->id,'image' => $image]);
+                }
+                ProductImage::insert($images);
+            }
             return response()->json([
                 'status' => true,
                 'message' => 'Item Added SuccessFully.',
-                'data' => $productCreate
+                'data' => products::with('product_images')->latest()->first(),
             ], 200);
         }
         return response()->json(['error' => true, 'message' => 'something went wrong'], 405);
@@ -143,7 +150,7 @@ class ProductController extends Controller
 
     public function show_product($id)
     {
-        $products = products::with('users')->find($id);
+        $products = products::with('users','product_images')->find($id);
 
         if (is_null($products)) {
             return response()->json([
@@ -166,6 +173,10 @@ class ProductController extends Controller
     {
         $delete_product = products::find($id);
         if ($delete_product != "") {
+            $images = ProductImage::where('product_id',$id);
+            if(!empty($images)){
+                $images->delete();
+            }
             $delete_product->delete();
             return response()->json([
                 'success' => true,
@@ -183,8 +194,24 @@ class ProductController extends Controller
     {
 
         $input = $request->all();
-        $product = $this->model::find($id);
+        $product = $this->model::with('product_images')->find($id);
         if ($product) {
+            $images = [];
+            if($request->has('images')){
+                foreach($request->images as $val){
+                    if(isset($val['id'])){
+                        ProductImage::find($val['id'])->update([
+                            'image' => $val['image']
+                        ]);
+                    }
+                    else{
+                        ProductImage::create([
+                            'product_id' => $id,
+                            'image' => $val['image']
+                        ]);
+                    }
+                }
+            }
             if($request->has('Item_image')){
                 $image = public_path('images\\').$product->Item_image;
                 if(file_exists($image)){

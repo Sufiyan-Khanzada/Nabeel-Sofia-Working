@@ -168,6 +168,13 @@ class RentedProduct extends Model
 
     public function checkavailable($id, $request)
     {
+        $pro = Products::where('id', $id)->get(['min_rent_day', 'max_rent_day'])->toArray();
+        $fromDate = Carbon::parse($request->from);
+        $toDate = Carbon::parse($request->to);
+        $diffReq = $fromDate->diffInDays($toDate);
+        if($diffReq < $pro[0]['min_rent_day'] || $diffReq > $pro[0]['max_rent_day']){
+            return response()->json(['error' => true, 'message' => 'minimum rent period for this product is '.$pro[0]['min_rent_day'].' and maximum rent period for this product is '.$pro[0]['max_rent_day']], 400);
+        }
         if(!$request->has(['from', 'to'])){
             $product = RentedProduct::where('request_status', 'approved')
             ->where('product_id', $id)
