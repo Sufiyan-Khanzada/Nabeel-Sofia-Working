@@ -107,7 +107,12 @@ class User extends Authenticatable
                 $chat = Message::with('user_messages')->whereIn('user_messages_id', $userChat)
                     ->orderBy('created_at', 'ASC')
                     ->get();
-                return $chat;
+                $count = count($chat);
+                return response()->json([
+                    'success' => true,
+                    'data' => $chat,
+                    'count' => $count
+                ], 200);
             }
             return;
     }
@@ -155,9 +160,7 @@ class User extends Authenticatable
         if ($request->has('message_id') && !empty($request->has('message_id'))) {
             $ids = [];
             foreach ($request->message_id as $key => $value) {
-                foreach ($value as $k => $v) {
-                    array_push($ids, $v);
-                }
+                    array_push($ids, $value);
             }
             $usermessage = UserMessage::where([
                 'sender_id' => $request->receiver_id,
@@ -171,7 +174,13 @@ class User extends Authenticatable
             $newmessage = Message::where('user_messages_id', $usermessage->id)
                 ->with('user_messages')->whereNotIn('id', $ids)
                 ->get();
-            return $newmessage;
+                $count = count($newmessage);
+                return response()->json([
+                    'success' => true,
+                    'data' => $newmessage,
+                    'count' => $count
+                ], 200);
+            // return $newmessage;
         } else {
             return null;
         }

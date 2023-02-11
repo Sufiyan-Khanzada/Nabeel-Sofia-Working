@@ -278,10 +278,20 @@ class RentedProduct extends Model
             ->whereDate('from','>=',date('Y-m-d',strtotime(now())))
             ->where('buyer_id', $request->buyer_id)
             ->where('id', $id)
+            ->where(function($q){
+                $q->where('product_status', '!=', 'Delivered')
+                ->orWhere('product_status', '!=', 'not available')
+                ->orWhere('product_status', '!=', 'available for rent');
+            })
             ->first();
         if($product){
             $product->update([
                 'product_status' => $request->status
+            ]);
+            Notification::create([
+                'user_id' => $product->seller_id,
+                'data' => 'Product Status Change By Buyer! '.'"'.$request->status.'"',
+                'read_at' => null
             ]);
             return response()->json(['success' => true, 'data' => $product], 200);
         }
@@ -296,10 +306,20 @@ class RentedProduct extends Model
             ->whereDate('from','>=',date('Y-m-d',strtotime(now())))
             ->where('seller_id', $request->seller_id)
             ->where('id', $id)
+            ->where(function($q){
+                $q->where('product_status', '!=', 'Delivered')
+                ->orWhere('product_status', '!=', 'not available')
+                ->orWhere('product_status', '!=', 'available for rent');
+            })
             ->first();
         if($product){
             $product->update([
                 'product_status' => $request->status
+            ]);
+            Notification::create([
+                'user_id' => $product->buyer_id,
+                'data' => 'Product Status Has Been Changed By Seller! '.'"'.$request->status.'"',
+                'read_at' => null
             ]);
             return response()->json(['success' => true, 'data' => $product], 200);
         }
